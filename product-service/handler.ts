@@ -1,8 +1,2 @@
-export async function hello(event) {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-        ["product1", "product2"]
-    ),
-  };
-}
+export { getProductsList } from "handlers/getProductsList";
+export { getProductById } from "handlers/getProductsById";

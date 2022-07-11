@@ -1,7 +1,14 @@
- {
-  "devDependencies": {
-    "esbuild": "^0.14.25",
-    "serverless-esbuild": "^1.25.0"
+{
+  "name": "product-service",
+  "scripts": {
+    "start": "sls offline",
+    "deploy": "sls deploy"
   },
-  "name": "product-service"
+  "devDependencies": {
+    "@types/node": "18.0.3",
+    "esbuild": "0.14.49",
+    "serverless": "^3.20.0",
+    "serverless-esbuild": "1.31.0",
+    "serverless-offline": "8.8.1"
+  }
 }
