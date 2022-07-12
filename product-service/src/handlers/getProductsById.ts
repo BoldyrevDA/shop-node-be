@@ -4,11 +4,17 @@ import products from 'mocks/products.json';
 
 export async function getProductById(event: APIGatewayEvent, context: Context) {
     const { productId } = event.pathParameters;
-    const product = products.find((product) => product.id === productId)
-    const response = product === undefined ? null : product;
+    const product = products.find((product: Product) => product.id === productId);
+
+    if (product === undefined) {
+        return {
+            statusCode: 404,
+            body: JSON.stringify({ message: "Product not found" })
+        };
+    }
 
     return {
         statusCode: 200,
-        body: JSON.stringify(response)
+        body: JSON.stringify(product)
     };
 }
