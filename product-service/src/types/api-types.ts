@@ -5,3 +5,9 @@ export interface Product {
     price: number;
     count: number;
 }
+
+export type Products = Product[];
+
+export interface ErrorApiResponse {
+    message: string;
+}

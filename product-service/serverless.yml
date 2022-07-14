@@ -1,6 +1,17 @@
 service: product-service
 frameworkVersion: '3'
 
+plugins:
+  - serverless-auto-swagger
+  - serverless-esbuild
+  - serverless-offline
+
+custom:
+  autoswagger:
+    # for more options see: https://github.com/completecoding/serverless-auto-swagger
+    apiType: 'httpApi'
+    typefiles: [ './src/types/api-types.ts' ]
+
 provider:
   name: aws
   runtime: nodejs16.x
@@ -17,13 +28,29 @@ functions:
       - httpApi:
           path: /products
           method: GET
+          # -- auto-swagger --
+          summary: 'Get products'
+          description: 'Returns a list of all products'
+          swaggerTags: [ 'Products' ]
+          responseData:
+            '200':
+              description: 'Successful response'
+              bodyType: 'Products'
+          # ------------------
   getProductById:
     handler: handler.getProductById
     events:
       - httpApi:
           path: /products/{productId}
           method: GET
-
-plugins:
-  - serverless-esbuild
-  - serverless-offline
+          # -- auto-swagger --
+          summary: 'Get product by ID'
+          description: 'Returns one product'
+          swaggerTags: [ 'Products' ]
+          responseData:
+            '200':
+              description: 'Successful response'
+              bodyType: 'Product'
+            '404':
+              description: 'Product not found'
+          # ------------------

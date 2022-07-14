@@ -1,5 +1,5 @@
 import { Context, APIGatewayEvent } from 'aws-lambda';
-import { Product } from "types/product";
+import { Product } from "types/api-types";
 import products from 'mocks/products.json';
 
 export async function getProductById(event: APIGatewayEvent, context: Context) {
