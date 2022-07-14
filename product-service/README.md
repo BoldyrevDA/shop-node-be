@@ -1,5 +1,22 @@
 # Product-service
 
+Service for working with products
+
+## Available Scripts
+
+### `start`
+
+Starts the project local in dev mode with swagger
+
+### `deploy`
+
+Deploy configured in `serverless.yml` stack via CloudFormation.
+
+### `generate-swagger`
+
+Generate the swagger file without deploying the application
+
+
 ## Usage
 
 ### Deployment
