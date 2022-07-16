@@ -1,10 +1,10 @@
-import products from 'mocks/products.json';
+import {mockProductsController} from "helpers/MockProductsDataController";
 
 export async function getProductsList(event) {
     return {
         statusCode: 200,
         body: JSON.stringify(
-            products
+            mockProductsController.getAll()
         ),
     };
 }

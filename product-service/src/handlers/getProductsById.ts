@@ -1,10 +1,10 @@
 import { Context, APIGatewayEvent } from 'aws-lambda';
-import { Product } from "types/api-types";
-import products from 'mocks/products.json';
+import {mockProductsController} from "helpers/MockProductsDataController";
 
 export async function getProductById(event: APIGatewayEvent, context: Context) {
     const { productId } = event.pathParameters;
-    const product = products.find((product: Product) => product.id === productId);
+
+    const product = mockProductsController.getById(productId);
 
     if (product === undefined) {
         return {
