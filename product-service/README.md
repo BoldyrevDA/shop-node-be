@@ -4,17 +4,20 @@ Service for working with products
 
 ## Available Scripts
 
-### `start`
-
+### `npm run start`
 Starts the project local in dev mode with swagger
 
-### `deploy`
-
+### `npm run deploy`
 Deploy configured in `serverless.yml` stack via CloudFormation.
 
-### `generate-swagger`
-
+### `npm run generate-swagger`
 Generate the swagger file without deploying the application
+
+### `npm run test`
+Run all tests.
+
+For watching files for changes and rerun tests related to changed files use `npm run test:watch`
+
 
 
 ## Usage
