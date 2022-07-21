@@ -1,5 +1,6 @@
 service: product-service
 frameworkVersion: '3'
+useDotenv: true
 
 plugins:
   - serverless-auto-swagger
@@ -17,6 +18,12 @@ provider:
   runtime: nodejs16.x
   stage: dev
   region: eu-west-1
+  environment:
+    PG_HOST: ${env:PG_HOST}
+    PG_PORT: ${env:PG_PORT}
+    PG_DATABASE: ${env:PG_DATABASE}
+    PG_USERNAME: ${env:PG_USERNAME}
+    PG_PASSWORD: ${env:PG_PASSWORD}
   # using API Gateway v2 (HTTP API)
   httpApi:
     cors: true

@@ -5,3 +5,6 @@ swagger
 
 # Serverless directories
 .serverless
+
+# sensitive data
+.env

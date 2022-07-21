@@ -22,12 +22,14 @@ For watching files for changes and rerun tests related to changed files use `npm
 
 ## Usage
 
+*NB!* Don't forget add `.env` file with the necessary variables.\
+Example of the variables is in `.env.example`
+
 ### Deployment
 
 In order to deploy the example, you need to run the following command:
-
 ```
-$ serverless deploy
+$ npm run deploy
 ```
 
 After running deploy, you should see output similar to:
@@ -49,18 +51,10 @@ After successful deployment, you can invoke the deployed function by using the f
 serverless invoke --function functionName
 ```
 
-Which should result in response similar to the following:
-
-```json
-{
-    "message": "Go Serverless v3! Your function executed successfully!",
-    "input": {}
-}
-```
 
 ### Local development
 
-You can invoke your function locally by using the following command:
+You can use `npm run start` or invoke your function locally by using the following command:
 
 ```bash
 serverless invoke local --function functionName
