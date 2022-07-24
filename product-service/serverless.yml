@@ -12,6 +12,9 @@ custom:
     # for more options see: https://github.com/completecoding/serverless-auto-swagger
     apiType: 'httpApi'
     typefiles: [ './src/types/api-types.ts' ]
+  esbuild:
+    exclude:
+      - pg-native
 
 provider:
   name: aws
@@ -19,11 +22,12 @@ provider:
   stage: dev
   region: eu-west-1
   environment:
-    PG_HOST: ${env:PG_HOST}
-    PG_PORT: ${env:PG_PORT}
-    PG_DATABASE: ${env:PG_DATABASE}
-    PG_USERNAME: ${env:PG_USERNAME}
-    PG_PASSWORD: ${env:PG_PASSWORD}
+    # env variables for "pg" see: https://node-postgres.com/features/connecting
+    PGHOST: ${env:PG_HOST}
+    PGPORT: ${env:PG_PORT}
+    PGUSER: ${env:PG_USERNAME}
+    PGDATABASE: ${env:PG_DATABASE}
+    PGPASSWORD: ${env:PG_PASSWORD}
   # using API Gateway v2 (HTTP API)
   httpApi:
     cors: true
