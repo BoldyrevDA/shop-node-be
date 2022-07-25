@@ -10,8 +10,14 @@ export class ProductService {
         return result.rows?.[0];
     }
 
-    async getAll(): Promise<Products> {
-        const result = await db.query('SELECT * FROM products');
+    async getList(): Promise<Products> {
+        const result = await db.query(
+            `SELECT p.id, p.title, p.description, p.price, s.count
+                  FROM products p
+                  JOIN stocks s
+                  ON p.id = s.product_id
+                 `,
+            );
         return result.rows;
     }
 }
