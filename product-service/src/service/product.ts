@@ -35,7 +35,11 @@ export class ProductService {
 
     async getById(id: string): Promise<Product> {
         const result = await db.query(
-            'SELECT * FROM products WHERE id = $1',
+            `SELECT p.id, p.title, p.description, p.price, s.count
+                  FROM products p
+                  JOIN stocks s
+                  ON p.id = s.product_id
+                  WHERE p.id = $1`,
             [id]
         );
         return result.rows?.[0];
