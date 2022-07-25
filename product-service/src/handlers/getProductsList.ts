@@ -1,8 +1,10 @@
-import {mockProductsController} from "utils/MockProductsDataController";
-import {db} from "db";
-import {lambdaHandler} from "utils/lamdaHandler";
-import {productService} from "service/product";
+import {mockProductsController} from "helpers/MockProductsDataController";
 
-export const getProductsList = lambdaHandler(async (event) => {
-    return await productService.getList();
-})
+export async function getProductsList(event) {
+    return {
+        statusCode: 200,
+        body: JSON.stringify(
+            mockProductsController.getAll()
+        ),
+    };
+}

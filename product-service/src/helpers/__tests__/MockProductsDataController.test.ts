@@ -1,4 +1,4 @@
-import {MockProductsDataController} from "utils/MockProductsDataController";
+import {MockProductsDataController} from "helpers/MockProductsDataController";
 
 describe("MockProductsDataController", () => {
     const productsListMock = [

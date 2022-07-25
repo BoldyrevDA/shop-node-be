@@ -1,18 +1,20 @@
-import { APIGatewayEvent } from 'aws-lambda';
-import {lambdaHandler} from "utils/lamdaHandler";
-import {productService} from "service/product";
-import {HttpCode, HttpError} from "utils/http";
+import { Context, APIGatewayEvent } from 'aws-lambda';
+import {mockProductsController} from "helpers/MockProductsDataController";
 
-export const getProductById = lambdaHandler(async (event: APIGatewayEvent) => {
+export async function getProductById(event: APIGatewayEvent, context: Context) {
     const { productId } = event.pathParameters;
-    const product = await productService.getById(productId);
+
+    const product = mockProductsController.getById(productId);
 
     if (product === undefined) {
-        throw new HttpError(
-            HttpCode.NOT_FOUND,
-            `Product with id: ${productId} was not found`
-        );
+        return {
+            statusCode: 404,
+            body: JSON.stringify({ message: "Product not found" })
+        };
     }
 
-    return product;
-})
+    return {
+        statusCode: 200,
+        body: JSON.stringify(product)
+    };
+}

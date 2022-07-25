@@ -1,6 +1,5 @@
 service: product-service
 frameworkVersion: '3'
-useDotenv: true
 
 plugins:
   - serverless-auto-swagger
@@ -12,22 +11,12 @@ custom:
     # for more options see: https://github.com/completecoding/serverless-auto-swagger
     apiType: 'httpApi'
     typefiles: [ './src/types/api-types.ts' ]
-  esbuild:
-    exclude:
-      - pg-native
 
 provider:
   name: aws
   runtime: nodejs16.x
   stage: dev
   region: eu-west-1
-  environment:
-    # env variables for "pg" see: https://node-postgres.com/features/connecting
-    PGHOST: ${env:PG_HOST}
-    PGPORT: ${env:PG_PORT}
-    PGUSER: ${env:PG_USERNAME}
-    PGDATABASE: ${env:PG_DATABASE}
-    PGPASSWORD: ${env:PG_PASSWORD}
   # using API Gateway v2 (HTTP API)
   httpApi:
     cors: true
@@ -64,24 +53,4 @@ functions:
               bodyType: 'Product'
             '404':
               description: 'Product not found'
-              bodyType: 'ErrorApiResponse'
-          # ------------------
-  createProduct:
-    handler: handler.createProduct
-    events:
-      - httpApi:
-          path: /products
-          method: POST
-          # -- auto-swagger --
-          summary: 'Create new product'
-          bodyType: 'ProductParams'
-          description: 'Create new product and stock in DB'
-          swaggerTags: [ 'Products' ]
-          responseData:
-            '200':
-              description: 'Successful operation'
-              bodyType: 'Product'
-            '400':
-              description: 'Incorrect request parameters'
-              bodyType: 'ErrorApiResponse'
           # ------------------
