@@ -19,6 +19,18 @@ create table if not exists stocks (
 	foreign key (product_id) references products (id)
 );
 
+alter table stocks
+alter column count set not null;
+
+alter table stocks
+add constraint count_positive_chk check (count >= 0);
+
+alter table stocks
+drop constraint "stocks_product_id_fkey",
+add constraint "stocks_product_id_fkey"
+  foreign key ("product_id")
+  references "products"(id)
+  on delete cascade;
 
 -- DML scripts
 -- fill the tables with data
