@@ -64,4 +64,24 @@ functions:
               bodyType: 'Product'
             '404':
               description: 'Product not found'
+              bodyType: 'ErrorApiResponse'
+          # ------------------
+  createProduct:
+    handler: handler.createProduct
+    events:
+      - httpApi:
+          path: /products
+          method: POST
+          # -- auto-swagger --
+          summary: 'Create new product'
+          bodyType: 'ProductParams'
+          description: 'Create new product and stock in DB'
+          swaggerTags: [ 'Products' ]
+          responseData:
+            '200':
+              description: 'Successful operation'
+              bodyType: 'Product'
+            '400':
+              description: 'Incorrect request parameters'
+              bodyType: 'ErrorApiResponse'
           # ------------------

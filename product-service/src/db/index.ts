@@ -13,6 +13,8 @@ export const db = {
         } catch (e) {
             logger.error("[db] error:", e.message)
             throw e;
+        } finally {
+            client.end();
         }
         return result;
     },
