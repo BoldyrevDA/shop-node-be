@@ -1,0 +1,8 @@
+{
+  "name": "shop-node-be",
+  "version": "1.0.0",
+  "workspaces": [
+    "./product-service",
+    "./import-service"
+  ]
+}
