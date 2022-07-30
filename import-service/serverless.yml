@@ -1,5 +1,6 @@
 service: import-service
 frameworkVersion: '3'
+useDotenv: true
 
 plugins:
   - serverless-esbuild
@@ -13,8 +14,17 @@ provider:
   region: eu-west-1
   httpApi:
     cors: true
+  environment:
+    BUCKET: ${env:BUCKET}
+    REGION: ${env:REGION}
+    UPLOADED_CATALOG: ${env:UPLOADED_CATALOG}
+    PARSED_CATALOG: ${env:PARSED_CATALOG}
 
   iamRoleStatements:
+    - Effect: "Allow"
+      Action: "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::shop-files-bucket/"
     - Effect: 'Allow'
       Action: 's3:*'
       Resource:
@@ -31,3 +41,12 @@ functions:
             parameters:
               querystrings:
                 name: true
+  importFileParser:
+    handler: handler.importFileParser
+    events:
+      - s3:
+          bucket: shop-files-bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
