@@ -1,0 +1,5 @@
+# package directories
+.esbuild
+
+# Serverless directories
+.serverless

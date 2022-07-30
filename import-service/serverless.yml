@@ -1,0 +1,33 @@
+service: import-service
+frameworkVersion: '3'
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+provider:
+  name: aws
+  versionFunctions: false
+  runtime: nodejs16.x
+  stage: dev
+  region: eu-west-1
+  httpApi:
+    cors: true
+
+  iamRoleStatements:
+    - Effect: 'Allow'
+      Action: 's3:*'
+      Resource:
+        - "arn:aws:s3:::shop-files-bucket/*"
+
+functions:
+  importProductsFile:
+    handler: handler.importProductsFile
+    events:
+      - httpApi:
+          path: /import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
