@@ -1,9 +1,5 @@
 # package directories
-swagger
 .esbuild
 
 # Serverless directories
 .serverless
-
-# sensitive data
-.env
