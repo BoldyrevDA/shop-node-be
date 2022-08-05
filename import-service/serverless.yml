@@ -19,6 +19,8 @@ provider:
     REGION: ${env:REGION}
     UPLOADED_CATALOG: ${env:UPLOADED_CATALOG}
     PARSED_CATALOG: ${env:PARSED_CATALOG}
+    SQS_URL:
+      'Fn::ImportValue': 'catalogItemsQueueURL'
 
   iamRoleStatements:
     - Effect: "Allow"
@@ -29,6 +31,10 @@ provider:
       Action: 's3:*'
       Resource:
         - "arn:aws:s3:::shop-files-bucket/*"
+    - Effect: "Allow"
+      Action: "sqs:*"
+      Resource:
+        'Fn::ImportValue': 'catalogItemsQueueArn'
 
 functions:
   importProductsFile:
@@ -37,10 +43,6 @@ functions:
       - httpApi:
           path: /import
           method: get
-          request:
-            parameters:
-              querystrings:
-                name: true
   importFileParser:
     handler: handler.importFileParser
     events:
