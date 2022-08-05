@@ -7,6 +7,28 @@ plugins:
   - serverless-esbuild
   - serverless-offline
 
+resources:
+  Resources:
+    catalogItemsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: "catalogItemsQueue"
+        MessageRetentionPeriod: 600
+  Outputs:
+    catalogItemsQueueURL:
+      Description: "URL of Amazon SQS Queue"
+      Value:
+        Ref: "catalogItemsQueue"
+      Export:
+        Name: "catalogItemsQueueURL"
+    catalogItemsQueueArn:
+      Description: "ARN of Amazon SQS Queue"
+      Value:
+        Fn::GetAtt:
+          - catalogItemsQueue
+          - Arn
+      Export:
+        Name: "catalogItemsQueueArn"
 custom:
   autoswagger:
     # for more options see: https://github.com/completecoding/serverless-auto-swagger
@@ -85,3 +107,12 @@ functions:
               description: 'Incorrect request parameters'
               bodyType: 'ErrorApiResponse'
           # ------------------
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - catalogItemsQueue
+              - Arn
