@@ -14,6 +14,17 @@ resources:
       Properties:
         QueueName: "catalogItemsQueue"
         MessageRetentionPeriod: 600
+    createProductTopic:
+      Type: "AWS::SNS::Topic"
+      Properties:
+        TopicName: "createProductTopic"
+    emailSNSSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: ${env:SUBSCRIPTION_EMAIL}
+        Protocol: email
+        TopicArn:
+          Ref: createProductTopic
   Outputs:
     catalogItemsQueueURL:
       Description: "URL of Amazon SQS Queue"
@@ -44,6 +55,9 @@ provider:
   stage: dev
   region: eu-west-1
   environment:
+    REGION: ${aws:region}
+    SNS_ARN:
+      Ref: createProductTopic
     # env variables for "pg" see: https://node-postgres.com/features/connecting
     PGHOST: ${env:PG_HOST}
     PGPORT: ${env:PG_PORT}
@@ -53,6 +67,11 @@ provider:
   # using API Gateway v2 (HTTP API)
   httpApi:
     cors: true
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "sns:*"
+      Resource:
+        Ref: createProductTopic
 
 functions:
   getProductsList:
