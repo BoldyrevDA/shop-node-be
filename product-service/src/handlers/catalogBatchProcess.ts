@@ -11,20 +11,29 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
     logger.log('Event: ', event);
     const products = event.Records.map(record => JSON.parse(record.body));
 
+    let totalCount = 0;
     for (let i = 0; i < products.length; i++) {
         const product = products[i];
         const validateError = validateProductParams(product);
         if (validateError) {
             throw new Error(validateError);
         }
+        totalCount += (+product.count || 0);
     }
     await productService.createProducts(products);
 
+    logger.log('Total count of products', totalCount);
     logger.log('Publishing to SNS', SNS_ARN);
     await sns.publish({
         Subject: 'New products in DB',
         Message: JSON.stringify(products),
         TopicArn: SNS_ARN,
+        MessageAttributes: {
+            count: {
+                DataType: 'Number',
+                StringValue: String(totalCount),
+            }
+        }
     }).promise();
 
     return;

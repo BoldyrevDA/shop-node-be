@@ -25,6 +25,16 @@ resources:
         Protocol: email
         TopicArn:
           Ref: createProductTopic
+    wholesaleEmailSNSSubscription:
+      Type: "AWS::SNS::Subscription"
+      Properties:
+        Endpoint: ${env:WHOLESALE_SUBSCRIPTION_EMAIL}
+        Protocol: email
+        FilterPolicy:
+          "count":
+            - "numeric": [">", 100]
+        TopicArn:
+          Ref: createProductTopic
   Outputs:
     catalogItemsQueueURL:
       Description: "URL of Amazon SQS Queue"
