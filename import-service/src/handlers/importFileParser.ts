@@ -6,6 +6,7 @@ import config from "config";
 import logger from "utils/logger";
 import {HttpCode} from "utils/http";
 import {moveToParsedCatalog} from "utils/moveToParsedCatalog";
+import {SQSProvider} from "utils/providers/sqsProvider";
 
 export const importFileParser = async (event: S3Event) => {
     const { REGION, BUCKET, SQS_URL } = config;
@@ -24,13 +25,20 @@ export const importFileParser = async (event: S3Event) => {
 
         logger.log(`Start processing`);
         const csvStream = s3Stream.pipe(csv());
+        const batchSize = 10;
+        const sqsProvider = new SQSProvider(sqs, SQS_URL, batchSize);
+        let rows = [];
+
         for await (const data of csvStream) {
-            logger.log('Sending item to SQS:', data)
-            const result = await sqs.sendMessage({
-                QueueUrl: SQS_URL,
-                MessageBody: JSON.stringify(data),
-            }).promise()
-            logger.log('Result of sending to SQS:', result);
+            logger.log('Item to SQS:', data)
+            rows.push(data);
+            if (rows.length >= batchSize) {
+                await sqsProvider.sendMessages(rows)
+                rows = [];
+            }
+        }
+        if (rows.length) {
+            await sqsProvider.sendMessages(rows)
         }
         logger.log(`Finish processing`);
 
