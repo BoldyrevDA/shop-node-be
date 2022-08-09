@@ -1,26 +1,40 @@
 import {Product, ProductParams, Products} from "types/api-types";
 import {db} from "db";
+import {Client} from "pg";
+
+interface Stock {
+    productId: string,
+    count: number,
+}
 
 export class ProductService {
+    private insertProductQuery(client: Client, product: ProductParams) {
+        const { title, description, price } = product;
+        return client.query(
+            'INSERT INTO products(title, description, price) VALUES($1, $2, $3) RETURNING id',
+            [title, description, price]
+        )
+    }
+
+    private insertStockQuery(client: Client, stock: Stock) {
+        return client.query(
+            'INSERT INTO stocks(product_id, count) VALUES($1, $2)',
+            [stock.productId, stock.count],
+        );
+    }
+
     async createProduct(productParams: ProductParams) {
         const client = await db.getClient();
-        const { title, description, price, count } = productParams;
         let productId;
         try {
             await client.query('BEGIN')
 
-            // insert product
-            const insertProductRes = await client.query(
-                'INSERT INTO products(title, description, price) VALUES($1, $2, $3) RETURNING id',
-                [title, description, price]
-            )
+            const insertProductRes = await this.insertProductQuery(client, productParams)
             productId = insertProductRes.rows[0].id;
-
-            // insert stock
-            await client.query(
-                'INSERT INTO stocks(product_id, count) VALUES($1, $2)',
-                [productId, count],
-            );
+            await this.insertStockQuery(client, {
+                productId,
+                count: productParams.count,
+            });
 
             await client.query('COMMIT')
         } catch (e) {
@@ -31,6 +45,32 @@ export class ProductService {
         }
 
         return { ...productParams, id: productId };
+    }
+
+    async createProducts(products: ProductParams[]) {
+        const client = await db.getClient();
+        let productId;
+        try {
+            await client.query('BEGIN')
+
+            for (let i = 0; i < products.length; i++) {
+                const product = products[i];
+                const insertProductRes = await this.insertProductQuery(client, product)
+                await this.insertStockQuery(client, {
+                    productId: insertProductRes.rows[0].id,
+                    count: product.count,
+                });
+            }
+
+            await client.query('COMMIT')
+        } catch (e) {
+            await client.query('ROLLBACK')
+            throw e;
+        } finally {
+            await client.end()
+        }
+
+        return;
     }
 
     async getById(id: string): Promise<Product> {

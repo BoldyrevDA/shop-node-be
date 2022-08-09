@@ -9,20 +9,16 @@ export const catalogBatchProcess = async (event: SQSEvent) => {
     const { REGION, SNS_ARN } = config;
     const sns = new AWS.SNS({ region: REGION });
     logger.log('Event: ', event);
-    const products = event.Records.map(record => record.body);
+    const products = event.Records.map(record => JSON.parse(record.body));
 
     for (let i = 0; i < products.length; i++) {
-        const product = JSON.parse(products[i]);
-
-        logger.log('Processing product', product);
+        const product = products[i];
         const validateError = validateProductParams(product);
-
         if (validateError) {
             throw new Error(validateError);
         }
-
-        await productService.createProduct(product);
     }
+    await productService.createProducts(products);
 
     logger.log('Publishing to SNS', SNS_ARN);
     await sns.publish({
