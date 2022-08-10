@@ -57,7 +57,7 @@ export class ProductService {
                 const product = products[i];
                 const insertProductRes = await this.insertProductQuery(client, product)
                 await this.insertStockQuery(client, {
-                    productId: insertProductRes.rows[0].id,
+                    productId: insertProductRes.rows[0]?.id,
                     count: product.count,
                 });
             }
