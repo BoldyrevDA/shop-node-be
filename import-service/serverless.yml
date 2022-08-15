@@ -1,0 +1,52 @@
+service: import-service
+frameworkVersion: '3'
+useDotenv: true
+
+plugins:
+  - serverless-esbuild
+  - serverless-offline
+
+provider:
+  name: aws
+  versionFunctions: false
+  runtime: nodejs16.x
+  stage: dev
+  region: eu-west-1
+  httpApi:
+    cors: true
+  environment:
+    BUCKET: ${env:BUCKET}
+    REGION: ${env:REGION}
+    UPLOADED_CATALOG: ${env:UPLOADED_CATALOG}
+    PARSED_CATALOG: ${env:PARSED_CATALOG}
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::shop-files-bucket/"
+    - Effect: 'Allow'
+      Action: 's3:*'
+      Resource:
+        - "arn:aws:s3:::shop-files-bucket/*"
+
+functions:
+  importProductsFile:
+    handler: handler.importProductsFile
+    events:
+      - httpApi:
+          path: /import
+          method: get
+          request:
+            parameters:
+              querystrings:
+                name: true
+  importFileParser:
+    handler: handler.importFileParser
+    events:
+      - s3:
+          bucket: shop-files-bucket
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: uploaded/
+          existing: true
