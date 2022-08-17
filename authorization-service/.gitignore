@@ -1,0 +1,8 @@
+# package directories
+.esbuild
+
+# Serverless directories
+.serverless
+
+# sensitive data
+.env
