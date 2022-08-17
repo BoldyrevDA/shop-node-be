@@ -1,47 +1,27 @@
-import {APIGatewayAuthorizerEvent, APIGatewayAuthorizerResult} from "aws-lambda";
+import {APIGatewayAuthorizerEvent} from "aws-lambda";
 
-export const basicAuthorizer = async (event: APIGatewayAuthorizerEvent, ctx, callback) => {
+export const basicAuthorizer = async (event: APIGatewayAuthorizerEvent) => {
     console.log('start', event);
-    // if (event.type !== 'REQUEST') {
-    //     callback('Unauthorized');
-    // }
+    if (event.type !== 'REQUEST') {
+        console.log('event.type', event.type);
+        return { isAuthorized: false };
+    }
 
     try {
         // @ts-ignore - identitySource exists in event
-        const { identitySource, routeArn } = event;
+        const { identitySource } = event;
         const authorizationToken = identitySource[0];
 
         const encodedCreds = authorizationToken.split(' ')[1];
         const buff = Buffer.from(encodedCreds, 'base64');
         const plainCreds = buff.toString('utf-8').split(':');
+
         const [username, password] = plainCreds;
-        console.log('username', username);
-        console.log('pass', password);
-        const storedUserPassword = process.env[username];
-        const effect = storedUserPassword === password
-            ? 'Allow'
-            : 'Deny'
-
-        return generatePolicy(encodedCreds, effect, routeArn);
+        const isAuthorized = !!process.env[username] && process.env[username] === password;
+        console.log(`for ${username} isAuthorized = ${isAuthorized}`);
+        return { isAuthorized };
     } catch (e) {
-        return callback(`Unathorized ${e.message}`);
+        console.error(e);
+        return { isAuthorized: false };
     }
-}
-
-const generatePolicy = (
-    principalId: string,
-    effect: 'Allow' | 'Deny',
-    resource: string,
-): APIGatewayAuthorizerResult => {
-    return {
-        principalId,
-        policyDocument: {
-            Version: '2012-10-17',
-            Statement: [{
-                Effect: effect,
-                Action: 'execute-api:Invoke',
-                Resource: resource,
-            }]
-        }
-    };
 }
