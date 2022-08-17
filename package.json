@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "workspaces": [
     "./product-service",
-    "./import-service"
+    "./import-service",
+    "./authorization-service"
   ]
 }

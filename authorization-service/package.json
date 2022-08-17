@@ -1,0 +1,15 @@
+{
+  "name": "authorization-service",
+  "version": "1.0.0",
+  "scripts": {
+    "deploy": "sls deploy"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.101",
+    "@types/node": "18.0.3",
+    "esbuild": "0.14.49",
+    "serverless": "^3.20.0",
+    "serverless-dotenv-plugin": "^4.0.2",
+    "serverless-esbuild": "1.31.0"
+  }
+}
