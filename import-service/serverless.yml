@@ -14,6 +14,14 @@ provider:
   region: eu-west-1
   httpApi:
     cors: true
+    authorizers:
+      basicAuthorizer:
+        name: basicAuthorizer
+        type: request
+        functionArn: "arn:aws:lambda:${self.provider.region}:${aws:accountId}:function:authorization-service-dev-basicAuthorizer"
+        resultTtlInSeconds: 0
+        identitySource: $request.header.Authorization
+
   environment:
     BUCKET: ${env:BUCKET}
     REGION: ${env:REGION}
@@ -43,6 +51,8 @@ functions:
       - httpApi:
           path: /import
           method: get
+          authorizer:
+            name: basicAuthorizer
   importFileParser:
     handler: handler.importFileParser
     events:
